@@ -40,7 +40,19 @@ absCorrEst <- function(rel_abund, scale_var, scale_rel_corr) {
   return(cov2cor(abs_cov))
 }
 
-bayesianAbsCorr <- function(Y, scale_var_sampler, scale_rel_sampler,
+#' BpimC Code
+#'
+#' @param Y D x N matrix of sequence counts. D taxa, N samples.
+#' @param scale_var_sampler A function. Returns a sampled estimate
+#'        of scalar variance in scale
+#' @param scale_rel_sampler A function. Returns a D-length vector
+#'        of estimates of correlation between relative abundances
+#'        and scale.
+#' @param scale_var_args A list. Arguments to pass to scale_var_sampler 
+#' @param scale_rel_args A list. Arguments to pass to scale_rel_sampler 
+#' @param nsample A numeric. The number of estimates of corr to sample.
+#' @return A D x D x S array. S estimates of D x D correlation matrices
+bpimC <- function(Y, scale_var_sampler, scale_rel_sampler,
 			    scale_var_args=list(), scale_rel_args=list(),
 			    nsample=1000) {
   taxa_names <- row.names(Y)
@@ -158,7 +170,7 @@ scale_rel_sampler <- function(n, D, m_l, m_u, r_l, r_u) {
 }
 scale_var_args <- list(s_l=0.4, 0.8)
 scale_rel_args <- list(m_l=0, m_u=0.15, r_l=-0.3, r_u=0.3, D=nrow(abs_abund))
-bayes_corr_res <- bayesianAbsCorr(Y_genus, scale_var_sampler,
+bayes_corr_res <- bpimC(Y_genus, scale_var_sampler,
 				  scale_rel_sampler, scale_var_args,
 				  scale_rel_args, nsample=2000)
 
